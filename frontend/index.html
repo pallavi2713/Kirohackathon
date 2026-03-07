@@ -1,41 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Government Scheme Navigator</title>
-    <!-- Add your styles here or link to styles.css -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gov Schemes AI Assistant</title>
+
+<!-- Inter font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Font Awesome for mic icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(135deg,#1f4037,#99f2c8);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.app{
+  width:1100px;
+  height:85vh;
+  background:white;
+  border-radius:18px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.25);
+  display:flex;
+  overflow:hidden;
+}
+
+.sidebar{
+  width:260px;
+  background:#0f172a;
+  color:white;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.scheme{
+  background:#1e293b;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.header{
+  padding:18px;
+  border-bottom:1px solid #eee;
+  font-weight:600;
+  font-size:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.chat-box{
+  flex:1;
+  padding:20px;
+  overflow-y:auto;
+  background:#f8fafc;
+}
+
+.message{
+  max-width:90%;
+  padding:14px 16px;
+  border-radius:14px;
+  margin-bottom:16px;
+  line-height:1.6;
+  font-size:14px;
+  white-space: pre-line;
+}
+
+.user{
+  background:#2563eb;
+  color:white;
+  margin-left:auto;
+}
+
+.bot{
+  background:white;
+  border:1px solid #e5e7eb;
+}
+
+.sources{
+  font-size:12px;
+  margin-top:8px;
+  color:#555;
+}
+
+.input-area{
+  display:flex;
+  padding:14px;
+  border-top:1px solid #eee;
+  background:white;
+  align-items:center;
+  gap:8px;
+}
+
+input{
+  flex:1;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-size:14px;
+  outline:none;
+}
+
+button.send-btn{
+  padding:8px 16px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button.send-btn:hover{
+  background:#1d4ed8;
+}
+
+#mic-btn {
+  padding:8px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#mic-btn:hover {
+  background:#1d4ed8;
+}
+
+#listening-indicator{
+  font-size:12px;
+  color:#2563eb;
+  font-weight:600;
+}
+
+.loader{
+  width:20px;
+  height:20px;
+  border:3px solid #ddd;
+  border-top:3px solid #2563eb;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>AI Government Scheme Navigator</h1>
-        <p>Ask questions about government schemes in English or Hindi</p>
-        
-        <!-- Chat interface will go here -->
-        <div id="chat-container">
-            <!-- Messages will be dynamically added here -->
-        </div>
-        
-        <div class="input-container">
-            <select id="language">
-                <option value="en">English</option>
-                <option value="hi">Hindi</option>
-            </select>
-            <input type="text" id="question-input" placeholder="Ask about government schemes...">
-            <button id="send-button">Send</button>
-        </div>
-    </div>
 
-    <script>
-        // Configuration
-        const API_ENDPOINT = 'YOUR_API_GATEWAY_URL_HERE';
-        let conversationHistory = [];
+<div class="app">
 
-        // Add your JavaScript logic here
-        // - Handle send button click
-        // - Call API Gateway
-        // - Display response
-        // - Manage conversation history
-    </script>
+<div class="sidebar">
+<h2>Gov AI</h2>
+<div class="scheme">PM Kisan</div>
+<div class="scheme">National Social Assistance Programme</div>
+<div class="scheme">MGNREGA-Mahatma Gandhi National Rural Employment Guarantee Act</div>
+<div class="scheme">Pradhan Mantri Awaas Yojana</div>
+<div class="scheme">Deen Dayal Upadhyaya Grameen Kaushalya Yojana</div>
+</div>
+
+<div class="main">
+
+<div class="header">
+<span>Government Schemes AI Assistant</span>
+<select id="language">
+<option value="en">English</option>
+<option value="hi">Hindi</option>
+</select>
+</div>
+
+<div id="chat" class="chat-box">
+<div class="message bot">
+Hello 👋 I can help you learn about Indian Government Schemes.<br>
+Try asking:<br>
+• What is PM Kisan?<br>
+• What is Ayushman Bharat?<br>
+• PM Awas Yojana eligibility
+</div>
+</div>
+
+<div class="input-area">
+  <input id="question" placeholder="Ask about government schemes...">
+  <button id="mic-btn">
+    <i id="mic-icon" class="fa-solid fa-microphone"></i>
+  </button>
+  <span id="listening-indicator"></span>
+  <button class="send-btn" onclick="ask()">Send</button>
+</div>
+
+</div>
+</div>
+
+<script>
+const input=document.getElementById("question");
+const chat=document.getElementById("chat");
+let history = [];
+
+// ---------------- Voice Recognition ----------------
+let recognition;
+let listening = false;
+const micBtn = document.getElementById("mic-btn");
+const micIcon = document.getElementById("mic-icon");
+const listeningIndicator = document.getElementById("listening-indicator");
+
+// Small beep when listening starts
+function playBeep(){
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioCtx.createOscillator();
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+  oscillator.connect(audioCtx.destination);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.1);
+}
+
+function initVoice(){
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    
+    const lang = document.getElementById("language").value;
+    recognition.lang = (lang === "hi") ? "hi-IN" : "en-US";
+
+    recognition.onresult = (event) => {
+        let transcript = "";
+        for(let i=event.resultIndex; i<event.results.length; i++){
+            transcript += event.results[i][0].transcript;
+        }
+        input.value = transcript;
+    };
+
+    recognition.onstart = () => {
+        listeningIndicator.textContent = "Listening...";
+        playBeep();
+    }
+
+    recognition.onend = () => {
+        listening = false;
+        micIcon.className = "fa-solid fa-microphone";
+        listeningIndicator.textContent = "";
+    };
+}
+
+// Handle mic button
+micBtn.addEventListener("click", () => {
+    if(!recognition) initVoice();
+
+    if(!listening){
+        recognition.start();
+        listening = true;
+        micIcon.className = "fa-solid fa-microphone-slash"; // listening icon
+        listeningIndicator.textContent = "Listening...";
+    } else {
+        recognition.stop();
+        listening = false;
+        micIcon.className = "fa-solid fa-microphone"; // normal icon
+        listeningIndicator.textContent = "";
+    }
+});
+
+// ---------------- Chat Function ----------------
+input.addEventListener("keypress",function(e){
+  if(e.key==="Enter") ask();
+});
+
+async function ask(){
+  let question=input.value.trim();
+  if(!question) return;
+
+  // Stop listening if active
+  if(listening){
+      recognition.stop();
+      listening = false;
+      micIcon.className = "fa-solid fa-microphone";
+      listeningIndicator.textContent = "";
+  }
+
+  chat.innerHTML+=`<div class="message user">${question}</div>`;
+  history.push({ role:"user", content:question });
+  input.value="";
+
+  let loader=`<div id="loader" class="message bot"><div class="loader"></div></div>`;
+  chat.innerHTML+=loader;
+  chat.scrollTop=chat.scrollHeight;
+
+  try{
+    let lang=document.getElementById("language").value;
+
+    let response=await fetch("https://4269f5jn18.execute-api.us-east-1.amazonaws.com/ask",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ question:question, language:lang, history: history.slice(-6) })
+    });
+
+    let data=await response.json();
+
+    let answer=data.answer.replace(/\n/g,"<br>");
+    let sources=data.sources||[];
+    document.getElementById("loader").remove();
+
+    let sourceHTML="";
+    if(sources.length>0){
+      sourceHTML="<div class='sources'><b>Sources:</b><br>";
+      sources.forEach((s,i)=>{
+        sourceHTML+=`${i+1}. ${s.substring(0,120)}...<br>`;
+      });
+      sourceHTML+="</div>";
+    }
+
+    // Audio Play Button
+    // Audio Play + Stop Buttons for answer
+	// Audio Play + Stop Buttons for answer
+	let audioButtonHTML = "";
+	if (data.audio_url) {
+		let audioId = "audio_" + Date.now();
+		audioButtonHTML = `
+		<audio id="${audioId}" src="${data.audio_url}" style="display:none;"></audio>
+		<div style="display:flex; gap:12px; margin-top:6px;"> <!-- flex container -->
+			<button style="
+				background:#2563eb; 
+				color:white; 
+				border:none; 
+				border-radius:6px; 
+				padding:6px 12px; 
+				cursor:pointer;
+			" onclick="document.getElementById('${audioId}').play()">🔊 Listen</button>
+
+			<button style="
+				background:#2563eb; 
+				color:white; 
+				border:none; 
+				border-radius:6px; 
+				padding:6px 12px; 
+				cursor:pointer;
+			" onclick="
+				let a=document.getElementById('${audioId}');
+				a.pause();
+				a.currentTime=0;
+			">⏹ Stop</button>
+		</div>
+		`;
+	}
+    chat.innerHTML += `
+    <div class="message bot">
+    ${answer}
+    ${sourceHTML}
+    ${audioButtonHTML}
+    </div>`;
+
+    history.push({ role:"assistant", content:answer });
+    chat.scrollTop=chat.scrollHeight;
+
+  }catch(err){
+    document.getElementById("loader").remove();
+    chat.innerHTML+=`<div class="message bot">Server Error</div>`;
+  }
+}
+</script>
+
 </body>
 </html>
