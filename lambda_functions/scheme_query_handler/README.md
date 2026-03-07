@@ -18,6 +18,7 @@ OpenSearch Vector Search → Context Retrieval → LLM Answer Generation → Res
 - **Follow-up Questions**: Automatically rewrites follow-up questions into standalone queries
 - **Vector Search**: Uses KNN similarity search in OpenSearch
 - **RAG Pipeline**: Combines retrieved context with LLM for accurate answers
+- **Text-to-Speech**: Generates audio responses using AWS Polly
 - **Source Attribution**: Returns source documents used for answer generation
 
 ## Project Structure
@@ -26,11 +27,11 @@ OpenSearch Vector Search → Context Retrieval → LLM Answer Generation → Res
 chatbot_lambda/
 ├── lambda_function.py           # Main Lambda handler
 ├── config.py                    # Configuration and environment variables
-├── aws_clients.py               # AWS client initialization (Bedrock, OpenSearch)
 ├── opensearch_operations.py     # OpenSearch index and search operations
 ├── embedding_service.py         # Embedding generation with Bedrock Titan
 ├── qna.py                       # Question-answering logic (RAG pipeline)
 ├── prompts.py                   # Prompt templates for LLM
+├── polly_service.py             # Text-to-speech using AWS Polly
 ├── requirements.txt             # Python dependencies
 └── README.md                    # This file
 ```
@@ -53,6 +54,7 @@ Configure these in AWS Lambda console or use the project root `.env` file:
 | `KNN_K_VALUE` | KNN k value | `3` |
 | `MAX_TOKENS` | Max tokens for answer | `500` |
 | `TEMPERATURE` | LLM temperature | `0.2` |
+| `POLLY_S3_BUCKET` | S3 bucket for audio files | `gov-schemes-demo` |
 
 ## Request Format
 
@@ -92,7 +94,8 @@ Configure these in AWS Lambda console or use the project root `.env` file:
       "PM-KISAN scheme provides Rs 6000 per year...",
       "Eligibility criteria include...",
       "Application process involves..."
-    ]
+    ],
+    "audio_url": "https://gov-schemes-demo.s3.amazonaws.com/polly_outputs/uuid.mp3"
   }
 }
 ```
@@ -122,6 +125,8 @@ zip -r chatbot_lambda.zip .
   - Bedrock: `InvokeModel`
   - OpenSearch: Read/Write access
   - CloudWatch: Logs
+  - Polly: `SynthesizeSpeech`
+  - S3: `PutObject` (for audio storage)
 
 ### 4. Configure API Gateway (Optional)
 
