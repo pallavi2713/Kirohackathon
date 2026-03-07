@@ -1,0 +1,2 @@
+# Dependencies for S3 Event Ingestion Trigger Lambda
+requests==2.31.0
